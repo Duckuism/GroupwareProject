@@ -1,0 +1,18 @@
+{
+  "dev": {
+    "name": "funwork",
+    "dialect": "sqlite",
+    "storage": ":memory:",
+    "username": "root",
+    "password": "",
+    "logging": true
+  },
+  "test": {
+    "name": "funwork",
+    "dialect": "sqlite",
+    "storage": ":memory:",
+    "username": "root",
+    "password": "",
+    "logging": false
+  }
+}
