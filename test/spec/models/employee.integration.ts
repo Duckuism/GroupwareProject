@@ -18,7 +18,7 @@ describe("[Integration] 직원 모델을 테스트 한다", () => {
 			Employee.findAll<Employee>().then(employees => {
 				expect(test.name).to.be.eql(employees[0].name);
 				done();
-			})
+			});
 		});
-	})
+	});
 });
