@@ -1,3 +1,5 @@
+//빌드같은 걸 해주는 md 요즘은 웹팩도 많이 쓴다. 서버는 걸프가 더 편한것같아서 걸프를 씀.
+
 var gulp = require("gulp");
 var ts = require("gulp-typescript");
 var tslint = require("gulp-tslint");
