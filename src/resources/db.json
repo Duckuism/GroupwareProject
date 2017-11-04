@@ -13,6 +13,6 @@
     "storage": ":memory:",
     "username": "root",
     "password": "",
-    "logging": false
+    "logging": true
   }
 }
