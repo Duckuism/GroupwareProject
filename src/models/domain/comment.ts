@@ -1,5 +1,5 @@
 
-import {Column, ForeignKey, Table, Model, ForeignKey, CreatedAt, UpdatedAt} from "sequelize-typescript";
+import {Column, ForeignKey, Table, Model, CreatedAt, UpdatedAt} from "sequelize-typescript";
 import Board from './board';
 
 @Table

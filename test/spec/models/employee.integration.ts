@@ -4,7 +4,9 @@ import Employee from "../../../src/models/domain/employee";
 import Board from "../../../src/models/domain/board";
 import Comment from "../../../src/models/domain/comment";
 
-describe("[Integration] 직원 모델을 테스트 한다", () => {
+
+
+describe("[Integration] 직원 모델을 테스트 한다", function(){
 
 	before((done: Function) => {
 		sequelize.sync().then(() => {
@@ -13,6 +15,13 @@ describe("[Integration] 직원 모델을 테스트 한다", () => {
 			done(error);
 		});
 	});
+
+  const cleanUp = (cb) => Employee.destroy({where: {}, truncate: true}).then(() => cb());
+
+  beforeEach((done: Function) => {
+    cleanUp(() => done());
+  });
+
 
 	it('직원을 추가한다', (done: Function) => {
 		const employee = new Employee({name: 'test'});
@@ -23,18 +32,4 @@ describe("[Integration] 직원 모델을 테스트 한다", () => {
 			});
 		});
 	});
-});
-
-describe("[integration] 게시판 모델을 테스트 중입니다.",() => {
-  before((done:Function) => {
-    sequelize.sync().then(() => {
-      done();
-    }).catch((error: Error) => {
-      done(error);
-    });
-  });
-
-
-
-  it();
 });
