@@ -17,7 +17,7 @@ describe("[integration] 게시판 모델을 테스트 중입니다.",function(){
   const cleanUp2 = (cb) => Board.destroy({where: {}, truncate: true}).then(() => cb());
 
   beforeEach((done: Function)=>{
-    cleanUp2(done());
+    cleanUp2(()=>done());
   });
 
   const save = (given, cb) => {
