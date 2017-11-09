@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {sequelize} from "../../../src/models/index";
 import Employee from "../../../src/models/domain/employee";
 import Board from "../../../src/models/domain/board";
-import Comment from "../../../src/models/domain/comment";
+
 
 describe("[integration] 게시판 모델을 테스트 중입니다.",function(){
 
@@ -38,5 +38,52 @@ describe("[integration] 게시판 모델을 테스트 중입니다.",function(){
       done();
     });
   });
+
+  it('게시글을 조회한다', function(done){
+    let givenBoard = {title:'글 제목1', content:'글 내용1', writer:'글 작성자1'};
+
+    save(givenBoard, (saveBoard: Board)=>{
+      Board.findOne<Board>({where:{title: '글 제목1'}})
+        .then((board: Board) => {
+          expect(board.title).to.be.equal(givenBoard.title);
+          done();
+        });
+    });
+  });
+
+  it('게시글을 변경한다.', function(done){
+    let givenBoard = {title:'글 제목1', content:'글 내용1', writer:'글 작성자1'};
+    let getGivenBoard = function(){return givenBoard;};
+    let updateBoard = {title:'변경된 글 제목1', content:'변경된 글 내용1', writer:'변경된 글 작성자1'};
+    let setGivenBoard = function(a){return givenBoard = a;};
+
+    save(givenBoard, (saveBoard: Board)=>{
+      Board.findOne<Board>({where:{title: '글 제목1'}})
+        .then((board: Board) => {
+          board.title = updateBoard.title;
+          board.content = updateBoard.content;
+          console.log(board);
+          done();
+      });
+      // Board.findOne<Board>({where:{title: '변경된 글 제목1'}})
+      //   .then((board: Board)=>{
+      //   expect(board.title).to.equal(givenBoard.title);
+      //   });
+    });
+
+  });
+
+  it.only('게시글을 삭제한다.',function(done){
+    let givenBoard = {title:'글 제목1', content:'글 내용1', writer:'글 작성자1'};
+
+    save(givenBoard, (saveBoard: Board) =>{
+      Board.findOne<Board>({where:{title: '글 제목1'}})
+        .then((board: Board) => {
+            board.destroy();
+            console.log(board);
+            done();
+          });
+      });
+    });
 
 });

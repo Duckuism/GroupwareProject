@@ -6,7 +6,7 @@ import Comment from "../../../src/models/domain/comment";
 
 
 
-describe("[Integration] 직원 모델을 테스트 한다", function(){
+describe("[Integration] 직원 모델을 테스트 한다", () => {
 
 	before((done: Function) => {
 		sequelize.sync().then(() => {
@@ -18,12 +18,11 @@ describe("[Integration] 직원 모델을 테스트 한다", function(){
 
   const cleanUp = (cb) => Employee.destroy({where: {}, truncate: true}).then(() => cb());
 
-  beforeEach((done: Function) => {
+  beforeEach((done: Function)=>{
     cleanUp(() => done());
   });
 
-
-	it('직원을 추가한다', (done: Function) => {
+	it('직원을 추가한다', function(done){
 		const employee = new Employee({name: 'test'});
 		employee.save().then(test => {
 			Employee.findAll<Employee>().then(employees => {
