@@ -66,6 +66,7 @@ describe("[integration] 게시판 모델을 테스트 중입니다.",function(){
     });
   });
 
+  // 이건 왜 안될까효?
   // it('게시글을 삭제한다.',function(done){
   //   let givenBoard = {title:'글 제목1', content:'글 내용1', writer:'글 작성자1'};
   //
@@ -77,7 +78,7 @@ describe("[integration] 게시판 모델을 테스트 중입니다.",function(){
   //         });
   //     });
   //   });
-  it('제목에 맞는 게싯글을 삭제', (done: Function) => {
+  it('제목에 맞는 게시글을 삭제', (done: Function) => {
     // given
     let givenBoard = {title: '글 제목1', content: '글 내용1', writer:'글 작성자1'};
     // when

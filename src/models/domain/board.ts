@@ -1,6 +1,7 @@
 
-import {Column, Table, Model, HasMany, UpdatedAt, CreatedAt} from "sequelize-typescript";
+import {Column, Table, Model, HasMany, UpdatedAt, CreatedAt, ForeignKey} from "sequelize-typescript";
 import Comment from './comment';
+import Employee from "./employee";
 
 @Table
 export default class Board extends Model<Board>{
@@ -22,4 +23,7 @@ export default class Board extends Model<Board>{
     @HasMany(() => Comment)
     comments: Comment[];
 
+    @ForeignKey(() => Employee)
+    @Column
+    employeeId: number;
 }

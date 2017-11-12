@@ -3,6 +3,8 @@ import DataSource from "../config/data-source";
 import Employee from "./domain/employee";
 import Board from "./domain/board";
 import Comment from "./domain/comment";
+import Team from "./domain/team";
+import CommentToComment from "./domain/commentToComment";
 
 class DatabaseConfig {
 
@@ -12,7 +14,7 @@ class DatabaseConfig {
 		const sequelize = new Sequelize({
 			...new DataSource().getConfig
 		});
-		sequelize.addModels([Employee, Board, Comment]);
+		sequelize.addModels([Employee, Board, Comment, Team, CommentToComment]);
 		this._sequelize = sequelize;
 	}
 

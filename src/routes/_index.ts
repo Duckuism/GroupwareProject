@@ -3,6 +3,7 @@ import * as EmployeeRoute from './employee.routes';
 import * as TeamRoute from './team.routes';
 import * as BoardRoute from './board.routes';
 import * as CommentRoute from './comment.routes';
+import * as CommentToComment from "./commentToComment.routes";
 
 export function initRoutes(app: Express) {
 
@@ -17,5 +18,5 @@ export function initRoutes(app: Express) {
 	TeamRoute.routes(app);
 	BoardRoute.routes(app);
   CommentRoute.routes(app);
-
+  CommentToComment.routes(app);
 }
