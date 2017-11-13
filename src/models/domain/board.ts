@@ -26,8 +26,8 @@ export default class Board extends Model<Board>{
 
 
     // TODO: 이미 board랑 comment랑 되어있는데 꼭 이렇게 관계설정을 다시 해주어야 하나?
-    @HasMany(() => CommentToComment)
-    commentToComments: CommentToComment[];
+    // @HasMany(() => CommentToComment)
+    // commentToComments: CommentToComment[];
 
     @ForeignKey(() => Employee)
     @Column

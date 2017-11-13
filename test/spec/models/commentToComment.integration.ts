@@ -63,10 +63,12 @@ describe("[intergration] 대댓글 모델 테스트", function () {
              Comment.findOne<Comment>({include:[CommentToComment]}).then((comment: Comment)=>{
                 CommentToComment.findOne<CommentToComment>({where:{content:'대댓글 내용1', writer:'대댓글 작성자1'}}).then((commentToComment: CommentToComment)=>{
 
-                expect(board.comments.length).to.be.equal(1);
-                // expect(board.comments.commentToComments.length).to.be.equal(1);
-                // expect(board.comments[0].commentToComments.length).to.be.equal(1);
-                // expect(commentToCommnet.writer).to.be.equal(givenCommentToComment.writer);
+                Board.findOne<Board>({include:[Comment]}).then((board: Board)=>{
+                  // expect(board.comments.commentToComments.length).to.be.equal(1);
+                  expect(board.comments[0].commentToComments.length).to.be.equal(1);
+                  // expect(commentToCommnet.writer).to.be.equal(givenCommentToComment.writer);
+                });
+
                 done();
 
               });
@@ -77,6 +79,58 @@ describe("[intergration] 대댓글 모델 테스트", function () {
     });
 
   });
+
+
+  it("게시글, 댓글, 대댓글 추가 후 대댓글 업데이트", (done: Function)=>{
+    let givenBoard = {title:'글 제목1', content:'글 내용1', writer:'글 작성자1'};
+    let givenComment = {content:'댓글 내용1', writer:'댓글 작성자1'};
+    let givenCommentToComment = {content:'대댓글 내용1', writer:'대댓글 작성자1'};
+    let updateCommentToComment = {content:'변경된 대댓글 내용1', writer:'변경된 대댓글 작성자1'};
+
+    saveBoard(givenBoard, (saveBoard: Board) => {
+      saveComment(givenComment, (saveComment: Comment) => {
+        saveBoard.$add('Comment', saveComment);
+        saveCommentToComment(givenCommentToComment, (saveCommentToComment: CommentToComment) => {
+          saveComment.$add('CommentToComment', saveCommentToComment);
+          saveCommentToComment.update(updateCommentToComment,{where:{content:'대댓글 내용1', writer:'대댓글 작성자1'}}).then(()=>{
+            Board.findOne<Board>({include:[Comment]}).then((board: Board) => {
+              Comment.findOne<Comment>({include:[CommentToComment]}).then((comment: Comment)=>{
+                expect(board.comments[0].content).to.be.equal(givenComment.content);
+                expect(comment.commentToComments[0].content).to.be.equal(updateCommentToComment.content);
+                //TODO:board부터 대댓글까지 한 번에 접근해서 테스트 코드를 한 줄로 만들 수는 없을까?
+                // expect(board.comments[0].commentToComments.length).to.be.equal(1);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it.only("게시글, 댓글, 대댓글 추가 후 대댓글 삭제", (done: Function)=>{
+    let givenBoard = {title:'글 제목1', content:'글 내용1', writer:'글 작성자1'};
+    let givenComment = {content:'댓글 내용1', writer:'댓글 작성자1'};
+    let givenCommentToComment = {content:'대댓글 내용1', writer:'대댓글 작성자1'};
+
+    saveBoard(givenBoard, (saveBoard: Board)=>{
+      saveComment(givenComment, (saveComment: Comment)=>{
+        saveBoard.$add('Comment', saveComment);
+        saveCommentToComment(givenCommentToComment, (saveCommentToComment: CommentToComment)=>{
+          saveComment.$add('CommentToComment', saveCommentToComment);
+          CommentToComment.destroy({where:{content:'대댓글 내용1', writer:'대댓글 작성자1'}}).then(()=>{
+            CommentToComment.findOne<CommentToComment>({where:{content:'대댓글 내용1', writer:'대댓글 작성자1'}}).then((destroyedCommentToComment: CommentToComment)=>{
+              expect(destroyedCommentToComment).to.be.equal(null);
+              done();
+            });
+          });
+        });
+      });
+    });
+
+  });
+
+
 
 
 });

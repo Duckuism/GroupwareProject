@@ -120,7 +120,7 @@ describe("[integration] 댓글 모델을 테스트 중입니다.",function(){
       });
     });
 
-    // TODO: 이건 왜 안될까?
+    // TODO: 어설펐던 코드 기억하려고 남겨둔다.
     // saveBoard(givenBoard, (saveBoard: Board)=>{
     //   Board.findOne<Board>({where:{title:'글 제목1', content:'글 내용1', writer:'글 작성자1'}})
     //     .then((board: Board)=>{
@@ -164,7 +164,7 @@ describe("[integration] 댓글 모델을 테스트 중입니다.",function(){
     });
   });
 
-  it.only('게시판 추가 후 댓글을 삭제한다.', (done: Function) => {
+  it('게시판 추가 후 댓글을 삭제한다.', (done: Function) => {
     let givenBoard = {title:'글 제목1', content:'글 내용1', writer:'글 작성자1'};
     let givenComment = {content:'댓글 내용1', writer:'댓글 작성자1'};
 
