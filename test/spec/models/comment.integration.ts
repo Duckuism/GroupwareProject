@@ -18,7 +18,7 @@ describe("[integration] 댓글 모델을 테스트 중입니다.",function(){
     });
   });
 
-  // 그럼 테스트를 시작하기 전에 깨끗하게 모든 걸 지워 보실까? truncate : table로우를 다 조져서 지우는 데이터 무결성 파괴의 주범.
+  // 그럼 테스트를 시작하기 전에 깨끗하게 모든 걸 지워 보실까? truncate : table 로우를 다 지우는 데이터 무결성 파괴의 주범.
   // 어차피 게시판과 댓글 둘 다 초기화 시켜야되는 거면, 게시글을 초기화 시키면 댓글도 자동으로 지워진다.
   const cleanUp = (cb) => Board.destroy({where: {}, truncate: true}).then(() => cb());
 
@@ -106,19 +106,21 @@ describe("[integration] 댓글 모델을 테스트 중입니다.",function(){
 
     saveBoard(givenBoard, (saveBoard: Board) => {
       saveComment(givenComment, (saveComment: Comment) => {
-        Board.findOne<Board>({where:{title:'글 제목1', content:'글 내용1', writer:'글 작성자1'}}).then((board: Board) => {
+        saveBoard.$add('Comment', saveComment);
+        Board.findOne<Board>({include:[Comment]}).then((board: Board) => {
           Comment.findOne<Comment>({where:{content:'댓글 내용1', writer:'댓글 작성자1'}}).then((comment: Comment)=>{
-            expect(board.title).to.be.equal(givenBoard.title);
-            expect(board.content).to.be.equal(givenBoard.content);
-            expect(board.writer).to.be.equal(givenBoard.writer);
-            expect(comment.content).to.be.equal(givenComment.content);
-            expect(comment.writer).to.be.equal(givenComment.writer);
+
+            expect(board.comments.length).to.be.equal(1);
+            expect(board.comments[0].content).to.be.equal(givenComment.content);
+            expect(board.comments[0].writer).to.be.equal(givenComment.writer);
+            // expect(comment.writer).to.be.equal(givenComment.writer);
             done();
           });
         });
       });
     });
 
+    // TODO: 이건 왜 안될까?
     // saveBoard(givenBoard, (saveBoard: Board)=>{
     //   Board.findOne<Board>({where:{title:'글 제목1', content:'글 내용1', writer:'글 작성자1'}})
     //     .then((board: Board)=>{
@@ -135,15 +137,23 @@ describe("[integration] 댓글 모델을 테스트 중입니다.",function(){
     let givenComment = {content:'댓글 내용1', writer:'댓글 작성자1'};
     let updateComment = {content:'변경된 댓글 내용1', writer:'변경된 댓글 작성자1'};
 
-    saveBoard(givenBoard, ()=>{
-      saveComment(givenComment, ()=>{
-        Board.findOne<Board>({where:{title:'글 제목1', content:'글 내용1', writer:'글 작성자1'}}).then((board: Board)=>{
+    saveBoard(givenBoard, (saveBoard: Board)=>{
+      saveComment(givenComment, (saveComment: Comment)=>{
+        saveBoard.$add('Comment', saveComment);
+        Board.findOne<Board>({include:[Comment]}).then((board: Board)=>{
           Comment.findOne<Comment>({where:{content:'댓글 내용1', writer:'댓글 작성자1'}}).then(()=>{
             Comment.update(updateComment,{where:{content:'댓글 내용1', writer:'댓글 작성자1'}}).then(()=>{
               Comment.findOne<Comment>({where:{content:'변경된 댓글 내용1', writer:'변경된 댓글 작성자1'}}).then((comment: Comment)=> {
 
+                expect(board.comments.length).to.be.equal(1);
                 expect(comment.content).to.be.equal(updateComment.content);
                 expect(comment.writer).to.be.equal(updateComment.writer);
+
+                // update가 반영된 board 객체를 다시 불러와야 update된 comments의 content속성을 참조할 수 있다.
+                // 내가 참조하는 객체는 참조하는 당시의 값이지, db와 실시간으로 미러링이 되지 않는다는 점을 잘 기억할 것.
+                Board.findOne<Board>({where:{title:'글 제목1', content:'글 내용1', writer:'글 작성자1'}}).then((board: Board)=>{
+                  expect(board.comments[0].content).to.be.equal(updateComment.content);
+                });
 
                 done();
               });
@@ -154,19 +164,26 @@ describe("[integration] 댓글 모델을 테스트 중입니다.",function(){
     });
   });
 
-  it('게시판 추가 후 댓글을 삭제한다.', (done: Function) => {
+  it.only('게시판 추가 후 댓글을 삭제한다.', (done: Function) => {
     let givenBoard = {title:'글 제목1', content:'글 내용1', writer:'글 작성자1'};
     let givenComment = {content:'댓글 내용1', writer:'댓글 작성자1'};
 
-    saveBoard(givenBoard, ()=>{
-      saveComment(givenComment, ()=>{
+    saveBoard(givenBoard, (saveBoard: Board)=>{
+      saveComment(givenComment, (saveComment: Comment)=>{
+        saveBoard.$add('Comment', saveComment);
         Comment.destroy({where:{content:'댓글 내용1', writer:'댓글 작성자1'}}).then(() => {
           Comment.findOne<Comment>({where:{content:'댓글 내용1', writer:'댓글 작성자1'}}).then((comment: Comment)=>{
 
-          expect(comment).to.be.equal(null);
-          done();
+            expect(comment).to.be.equal(null);
 
-        });
+            //destroy가 반영된 후에 Board모델 객체를 참조하여 연결된 comments 모델에 할당된 값이 없는 것을 확인한다.
+            Board.findOne<Board>({where:{title:'글 제목1', content:'글 내용1', writer:'글 작성자1'}}).then((board: Board)=>{
+              expect(board.comments[0].content).to.be.equal(undefined);
+            });
+
+            done();
+
+          });
         });
       });
     });
